@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Haribo's Birthday Quest</title>
+  <style>
+    body {
+      background: #1e1e2f;
+      color: #fff;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      text-align: center;
+      padding: 2rem;
+      overflow-x: hidden;
+    }
+    .hidden {
+      display: none;
+    }
+    button {
+      background: #ff66aa;
+      border: none;
+      padding: 1rem 2rem;
+      color: white;
+      font-size: 1rem;
+      border-radius: 12px;
+      cursor: pointer;
+      margin: 1rem;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background: #e05599;
+    }
+    .final-message {
+      font-size: 1.5rem;
+      color: #ffe066;
+      margin-top: 2rem;
+    }
+    .error-message {
+      color: #ff4444;
+      font-weight: bold;
+      margin-top: 0.5rem;
+    }
+
+    /* Candle flame flicker animation */
+    @keyframes flicker {
+      0%, 100% { transform: scale(1) translateY(0); opacity: 1; }
+      50% { transform: scale(1.1) translateY(-3px); opacity: 0.8; }
+    }
+
+    /* Confetti styles */
+    .confetti-piece {
+      position: fixed;
+      width: 8px;
+      height: 8px;
+      background-color: red;
+      opacity: 0.9;
+      z-index: 9999;
+      pointer-events: none;
+      border-radius: 2px;
+      will-change: transform, opacity;
+      animation-name: confetti-fall, confetti-fade;
+      animation-timing-function: linear, ease-out;
+      animation-iteration-count: 1, 1;
+    }
+    @keyframes confetti-fall {
+      0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(100vh) rotate(360deg);
+        opacity: 0;
+      }
+    }
+    @keyframes confetti-fade {
+      0% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="intro">
+    <h1>🎂 Haribo's Birthday Quest 🎂</h1>
+    <p>Complete the quiz to receive your birthday gift 🎁</p>
+    <button onclick="startQuiz()">Start the Quiz</button>
+  </div>
+
+  <div id="quiz" class="hidden">
+    <h2>⭐️ Quest 1: What’s Harry’s secret weapon for being awesome?</h2>
+    <button onclick="checkAnswer(1, 'correct')">A) His caring nature and bright mind ✨</button><br />
+    <button onclick="checkAnswer(1, 'wrong')">B) His legendary British sarcasm 🇬🇧</button><br />
+    <div id="error1" class="error-message"></div>
+  </div>
+
+  <div id="quiz2" class="hidden">
+    <h2>⭐️ Quest 2: Harry’s beautiful blue eyes reflect…</h2>
+    <button onclick="checkAnswer(2, 'correct')">A) His kindness and warm soul 🌟</button><br />
+    <button onclick="checkAnswer(2, 'wrong')">B) How many hours he spent gaming last night 🕹️</button><br />
+    <div id="error2" class="error-message"></div>
+  </div>
+
+  <div id="quiz3" class="hidden">
+    <h2>⭐️ Quest 3: What’s one thing that makes Harry irresistibly cute?</h2>
+    <button onclick="checkAnswer(3, 'correct')">A) His bright smile and adorable look 🥰</button><br />
+    <button onclick="checkAnswer(3, 'wrong')">B) Skipping meals when he has too much work 🍽️</button><br />
+    <div id="error3" class="error-message"></div>
+  </div>
+
+  <div id="surprise" class="hidden">
+    <h2>🎉 Great job! You passed the quiz! 🎉</h2>
+    <p>Make a wish — as you passed the quiz, your wish will come true! 🎂</p>
+
+    <hr style="border: none; margin: 1.5rem 0;">
+
+    <div style="position: relative; display: inline-block; margin-top: 2rem;">
+      <!-- Candle base -->
+      <div id="candle" style="
+        width: 20px; 
+        height: 60px; 
+        background: #ffe066; 
+        margin: 0 auto;
+        border-radius: 5px;
+        position: relative;
+        top: -30px;
+        cursor: pointer;
+        transition: opacity 1s ease;
+      ">
+        <!-- Flame -->
+        <div id="flame" style="
+          width: 14px;
+          height: 20px;
+          background: radial-gradient(circle at 50% 50%, #ffdd55, #ff6600);
+          border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+          position: absolute;
+          top: -20px;
+          left: 3px;
+          animation: flicker 1.2s infinite;
+          transition: opacity 1s ease;
+        "></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="wishMessage" class="final-message" style="display: none;">
+    Wish granted! Happy 26th Birthday, Harry! 🥳<br />
+    May your year ahead be filled with epic gaming victories,<br />
+    perfect guitar riffs, cozy cat cuddles, and endless happiness.<br />
+    You deserve it all! 💜
+    <br />
+    <img src="hb.png" alt="Description" style="margin-top: 1rem; max-width: 100%; height: auto;">
+  </div>
+
+  <script>
+    function startQuiz() {
+      document.getElementById("intro").classList.add("hidden");
+      document.getElementById("quiz").classList.remove("hidden");
+    }
+
+    function checkAnswer(questionNum, answer) {
+      const errorDiv = document.getElementById("error" + questionNum);
+      if (answer === "correct") {
+        errorDiv.textContent = ""; // clear error
+        // Hide current quiz and show next or surprise
+        document.getElementById("quiz" + (questionNum === 1 ? "" : questionNum)).classList.add("hidden");
+        if (questionNum < 3) {
+          document.getElementById("quiz" + (questionNum + 1)).classList.remove("hidden");
+        } else {
+          document.getElementById("surprise").classList.remove("hidden");
+        }
+      } else {
+        errorDiv.textContent = "Wrong answer, try again.";
+      }
+    }
+
+    // Confetti generator
+    function createConfetti() {
+      const colors = ['#ff0a54', '#ff477e', '#ff85a1', '#fbb1b1', '#f9bec7', '#e6e6fa', '#b0e0e6', '#87ceeb'];
+      const count = 50;
+
+      for (let i = 0; i < count; i++) {
+        const confetti = document.createElement('div');
+        confetti.classList.add('confetti-piece');
+        confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        confetti.style.left = Math.random() * window.innerWidth + 'px';
+        confetti.style.top = (Math.random() * -20) + 'px';
+        confetti.style.width = (Math.random() * 8 + 4) + 'px';
+        confetti.style.height = confetti.style.width;
+        confetti.style.animationDuration = (Math.random() * 3 + 2) + 's';
+        confetti.style.animationDelay = (Math.random() * 0.5) + 's';
+        document.body.appendChild(confetti);
+
+        // Remove confetti after animation
+        confetti.addEventListener('animationend', () => {
+          confetti.remove();
+        });
+      }
+    }
+
+    // Candle click handler for blowing out the flame and candle base, showing wish message and confetti
+    document.addEventListener("DOMContentLoaded", () => {
+      const candle = document.getElementById('candle');
+      if (candle) {
+        candle.onclick = function() {
+          const flame = document.getElementById('flame');
+          flame.style.animation = 'none';
+          flame.style.opacity = '0';
+          flame.style.transition = 'opacity 1s ease-out';
+
+          // Also fade out candle base
+          candle.style.opacity = '0';
+
+          // After fade out, hide candle and flame, show wish message and confetti
+          setTimeout(() => {
+            flame.style.display = 'none';
+            candle.style.display = 'none';
+            document.getElementById('wishMessage').style.display = 'block';
+            createConfetti();
+          }, 1000);
+        };
+      }
+    });
+  </script>
+</body>
+</html>
